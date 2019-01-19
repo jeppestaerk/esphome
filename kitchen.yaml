@@ -1,0 +1,50 @@
+esphomeyaml:
+  name: kitchen
+  platform: ESP8266
+  board: esp01_1m
+  board_flash_mode: dout
+  esphomelib_version:
+    branch: dev
+
+logger:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_psk
+
+mqtt:
+  broker: !secret mqtt_broker
+
+api:
+  password: !secret api_password
+
+ota:
+  password: !secret ota_password
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Køkken Button"
+    on_press:
+      - switch.toggle: relay
+
+switch:
+  - platform: gpio
+    name: "Køkken Relay"
+    pin: GPIO12
+    id: relay
+
+output:
+  - platform: esp8266_pwm
+    id: basic_green_led
+    pin:
+      number: GPIO13
+      inverted: True
+
+light:
+  - platform: monochromatic
+    name: "Køkken Green LED"
+    output: basic_green_led
